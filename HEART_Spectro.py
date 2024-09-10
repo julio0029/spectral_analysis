@@ -4,7 +4,10 @@ import pygame
 from adafruit_as726x import AS726x_I2C
 
 # ============= PARAMETERS ============
-SPECTRA_PERIOD = 5 #s
+METHOD = 'SUM' 		# Choose between 'SUM' and 'AVERAGE' 
+			# SUM adds light count over the period (greater definition), avarage averages it.
+
+SPECTRA_PERIOD = 5	#in s for averaged_spectra, in count for sum_spectra
 
 # Define leds and corresponding ports
 LEDs={
@@ -119,8 +122,11 @@ def main():
             while not sensor.data_ready:
                 time.sleep(0.1)
             
-            # get spectra over 1s average
-            data=sum_spectra(_count=5)
+            # get spectra 
+	    if METHOD == 'AVERAGE':
+            	data = average_spectra(_count=SPECTRA_PERIOD)
+	    else:
+		data = sum_spectra(_count=SPECTRA_PERIOD)
             data.update({'nm':nm})
             
             #Append to file
@@ -128,7 +134,7 @@ def main():
             with open(filename, 'a') as f:
                 f.write(f"{str(data)},")
             
-            #plot Data:
+            #Display Data on terminal:
             print()
             print(f"Cycle: {_cycle}")
             for wl, v in data.items():
