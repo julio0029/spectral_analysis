@@ -7,6 +7,7 @@ import matplotlib.animation as anim
 VIDEO="NADH_Speed.m4v"
 LOWER = np.array([0,0,100])
 UPPER = np.array([70,70,250])
+FRAMERATE=24
 GRAPH=False
 SAVING=True
 DATA=[]
@@ -65,7 +66,7 @@ if SAVING:
 		else:process_frame(frame)
 
 	df=pd.Series(DATA)
-	df=df.loc[df>30000000].ewm(span=20).mean()
+	df=df.loc[df>30000000].ewm(span=FRAMERATE).mean()
 	df.to_csv(f'{VIDEO}_analysis.csv')
 	plt.plot(df)
 	plt.show()
